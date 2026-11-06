@@ -1,0 +1,54 @@
+# --- Defensive secrets patterns (default-deny anything that looks like a credential) ---
+*.env
+.env*
+*key*
+*token*
+*credential*
+*secret*
+*.pem
+*.p12
+*.jks
+# Allow-list source files whose names legitimately contain these words.
+!**/*.py
+!**/*.java
+!**/*.md
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+build/
+dist/
+
+# --- Gradle / Java ---
+.gradle/
+**/build/
+out/
+*.class
+!gradle/wrapper/gradle-wrapper.jar
+
+# --- IDE / OS ---
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- Data & models: raw data is NEVER committed. Only manifests, schemas, and
+#     small, provenance-labelled fixtures are tracked. See dataset/README.md. ---
+dataset/**/raw/
+dataset/**/processed/
+dataset/**/*.zip
+dataset/**/*.parquet
+dataset/**/*.npz
+*.onnx
+*.pt
+*.ckpt
+runs/

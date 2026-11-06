@@ -1,0 +1,12 @@
+name: ci
+on: [push, pull_request]
+jobs:
+  python-reference:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - run: pip install -e "ml[dev]"
+      - run: python -m pytest ml -q
+  # java-stage-b: added in Phase 4 — runs the same schema/fixtures against the plugin extractor.

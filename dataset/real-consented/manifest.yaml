@@ -1,0 +1,4 @@
+# real-consented datasets. See dataset/README.md.
+# GATED: nothing may be registered here until docs/privacy-consent-policy-DRAFT.md has
+# passed legal review AND the project owner has given written sign-off (consent_gate.signed_off).
+datasets: []

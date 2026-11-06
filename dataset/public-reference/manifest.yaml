@@ -1,0 +1,70 @@
+# Public reference datasets. Raw files are NEVER stored in this repo (it lives in a
+# OneDrive-synced folder); local_path is relative to $FMAC_DATA_ROOT/public-reference/.
+# Every licence below was checked on 2026-10-15 — see docs/literature-and-datasets.md.
+datasets:
+  - id: gan-aimbots-vizdoom
+    title: Data for "GAN-Aimbots" (Kanervisto, Hautamaki, Kinnunen)
+    trust_level: public-reference
+    source:
+      citation: "Kanervisto, Kinnunen, Hautamaki. GAN-Aimbots: Using Machine Learning for Cheating in First Person Shooters. IEEE Trans. Games (2022); arXiv:2205.07060"
+      url: https://zenodo.org/record/6345323
+      doi: 10.5281/zenodo.6345323
+      retrieved: "2026-10-15"
+      sha256_or_md5: "md5:5a1d93c6616c5fdac31547f00ed372e8 (data.zip)"
+    license: {spdx: CC-BY-4.0, verified: true, notes: "Zenodo record licence. Code repo (github.com/miffyli/gan-aimbots) is MIT."}
+    usable: true
+    usability_notes: >
+      ViZDoom (35 Hz tics), not Minecraft: usable only as a STRUCTURAL reference
+      (do tick-sampled features separate consenting humans from light/strong/GAN
+      aimbots at all?), never to calibrate Minecraft-specific distributions.
+    contents: "Human players with and without light/strong/GAN aimbots; consented data collection per repo scripts."
+    game: vizdoom
+    local_path: gan-aimbots/
+  - id: xguardian-cs2
+    title: XGuardian artifacts (repository, datasets)
+    trust_level: public-reference
+    source:
+      citation: "Zhang, Sun, Qian. XGuardian: Towards Explainable and Generalized AI Anti-Cheat on FPS Games. USENIX Security 2026; arXiv:2601.18068"
+      url: https://zenodo.org/doi/10.5281/zenodo.17845614
+      doi: 10.5281/zenodo.17845614
+      retrieved: "2026-10-15"
+    license: {spdx: GPL-3.0-or-later, verified: true, notes: "Zenodo record licence for the artifact bundle (22.0 GB) plus 13 raw-data parts. Using data to calibrate is fine; any code reuse makes the consumer GPL."}
+    usable: true
+    usability_notes: >
+      Not downloaded (22 GB). CS2 at ~64 tick/s, real platform labels manually re-verified.
+      Methodology/cross-game shape reference only. Download deferred to Phase 3 on request.
+    contents: "3,069,216 aiming operations, 31,971 trajectories, 5,486 players (per paper); pitch/yaw sequences + fire/elimination flags."
+    game: cs2
+    local_path: null
+  - id: minecraft-mouse-dynamics-uwec
+    title: Minecraft Mouse Dynamics Dataset (10- and 40-user)
+    trust_level: public-reference
+    source:
+      citation: "Siddiqui, Dave, Seliya. Continuous Authentication Using Mouse Movements, Machine Learning, and Minecraft. arXiv:2110.11080 (2021)"
+      url: https://github.com/NyleSiddiqui/Minecraft-Mouse-Dynamics-Dataset
+      retrieved: "2026-10-15"
+    license: {spdx: NONE-FOUND, verified: true, notes: "Repository has no LICENSE file; paper is CC BY-SA 4.0 but that covers the article, not the data. Default = all rights reserved."}
+    usable: false
+    usability_notes: >
+      Blocked on licence AND unsuitable on inspection: (1) 10-user raw files have
+      1-second timestamp resolution; (2) 40-user files record absolute desktop cursor
+      X/Y that is clipped at screen edges (7.7% of events) and never re-centred (0% near
+      centre), i.e. not in-game camera deltas; (3) no in-game vs menu labels; (4) edition
+      ("free trial") and version unspecified; (5) Windows pointer acceleration likely applied.
+      See docs/calibration-report-phase1.md.
+    contents: "Timestamp, X, Y, button, subject id."
+    game: minecraft (edition unknown)
+    local_path: null
+  - id: cs2cd-anticheatpt
+    title: CS2CD (AntiCheatPT)
+    trust_level: public-reference
+    source:
+      citation: "Loo, Luzkov, Burelli. AntiCheatPT: A Transformer-Based Approach to Cheat Detection in Competitive Computer Games. arXiv:2508.06348"
+      url: https://arxiv.org/abs/2508.06348
+      retrieved: "2026-10-15"
+    license: {spdx: UNKNOWN, verified: false, notes: "Paper says the dataset is publicly released; hosting URL and licence not located yet."}
+    usable: false
+    usability_notes: "Blocked until licence is confirmed."
+    contents: "795 labelled CS2 matches, 90,707 context windows."
+    game: cs2
+    local_path: null

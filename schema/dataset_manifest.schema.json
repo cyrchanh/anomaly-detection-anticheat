@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "fmac/dataset_manifest.schema.json",
+  "title": "FMAC dataset manifest (dataset/<trust-level>/manifest.yaml)",
+  "type": "object",
+  "required": ["datasets"],
+  "additionalProperties": false,
+  "properties": {
+    "datasets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "title", "trust_level", "source", "license", "usable", "contents", "local_path"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$"},
+          "title": {"type": "string"},
+          "trust_level": {"enum": ["real-consented", "public-reference", "synthetic-calibrated", "synthetic-adversarial"]},
+          "source": {
+            "type": "object",
+            "required": ["citation"],
+            "properties": {
+              "citation": {"type": "string"},
+              "url": {"type": "string"},
+              "doi": {"type": "string"},
+              "retrieved": {"type": "string"},
+              "sha256_or_md5": {"type": "string"}
+            }
+          },
+          "license": {
+            "type": "object",
+            "required": ["spdx", "verified"],
+            "properties": {
+              "spdx": {"type": "string", "description": "SPDX id, or NONE-FOUND / UNKNOWN"},
+              "verified": {"type": "boolean"},
+              "notes": {"type": "string"}
+            }
+          },
+          "usable": {"type": "boolean"},
+          "usability_notes": {"type": "string"},
+          "contents": {"type": "string"},
+          "game": {"type": "string"},
+          "local_path": {"type": ["string", "null"], "description": "Relative to the manifest dir; raw data is gitignored. null = not downloaded."},
+          "generator": {
+            "type": "object",
+            "description": "Required for synthetic levels: code path + version + seed",
+            "properties": {"code": {"type": "string"}, "version": {"type": "string"}, "seed": {"type": "integer"}}
+          },
+          "consent_gate": {
+            "type": "object",
+            "description": "Required for real-consented",
+            "required": ["policy_version", "signed_off"],
+            "properties": {
+              "policy_version": {"type": "string"},
+              "signed_off": {"type": "boolean"},
+              "signed_off_by": {"type": "string"},
+              "signed_off_date": {"type": "string"},
+              "min_age": {"type": "integer"}
+            }
+          }
+        },
+        "allOf": [
+          {"if": {"properties": {"trust_level": {"const": "real-consented"}}},
+           "then": {"required": ["consent_gate"]}},
+          {"if": {"properties": {"trust_level": {"enum": ["synthetic-calibrated", "synthetic-adversarial"]}}},
+           "then": {"required": ["generator"]}}
+        ]
+      }
+    }
+  }
+}

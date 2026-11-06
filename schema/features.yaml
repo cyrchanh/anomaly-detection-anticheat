@@ -1,0 +1,306 @@
+# =============================================================================
+# FMAC feature specification — SINGLE SOURCE OF TRUTH
+# =============================================================================
+# Both the Python reference extractor (ml/src/fmac) and the Java plugin
+# extractor (Phase 4) MUST read every constant below from this file at
+# build/load time, and MUST pass every fixture in schema/fixtures/.
+# Formulas are normative prose + pseudo-math; the fixtures are the tie-breaker.
+#
+# Two-stage contract (see docs/adr/0002-two-stage-feature-contract.md):
+#   Stage A  packets  -> TickRecord stream     (capture layer; Java only, Phase 4)
+#   Stage B  TickRecords -> FeatureWindow      (this file; Python AND Java)
+# Training-serving skew is controlled by making Stage B a pure, deterministic
+# function of a serialisable input that both sides can be fed identically.
+#
+# Departures from the original hackathon spec are marked with `origin:` and are
+# explained in docs/adr/0001-feature-redesign.md.
+# =============================================================================
+
+spec_version: "1.0.0"
+
+protocol:
+  game: "minecraft-java"
+  min_version: "1.21.2"        # first version with serverbound CLIENT_TICK_END
+  min_protocol_number: 768
+  combat: "post-1.9-attack-cooldown"
+  notes: >
+    1.21.0/1.21.1 are excluded: without CLIENT_TICK_END the server cannot know
+    client tick boundaries exactly, and every per-tick feature below assumes it can.
+    Bedrock (Geyser) players are excluded entirely.
+
+numerics:
+  float_model: "IEEE-754 binary64 for all Stage B arithmetic"
+  rotation_input_precision: "binary32"   # yaw/pitch arrive as Java floats
+  transcendental_functions: >
+    sin, cos, atan2, sqrt. Java MUST use StrictMath (fdlibm) for reproducibility.
+    Python uses math.*. Cross-implementation agreement is required to
+    fixtures' tolerance, not bit-exactness.
+  hypot: "hypot(a, b) in this file means sqrt(a*a + b*b) computed literally — NOT a library hypot (Java and Python library hypots round differently)"
+  angle_conversion: "rad(x) = x * (pi/180); deg(x) = x * (180/pi)   # == java Math.toRadians/toDegrees, python math.radians/degrees"
+  rounding_key: "key(x) = floor(x * 100000 + 0.5) as int64   # NOT banker's rounding"
+  wrap180: "wrap180(x) = x - 360 * floor((x + 180) / 360)     # result in [-180, 180)"
+  non_finite_json_encoding: 'non-finite floats are encoded as the strings "NaN", "Infinity", "-Infinity"'
+  default_fixture_tolerance: {rel: 1.0e-9, abs: 1.0e-9}
+
+# -----------------------------------------------------------------------------
+# Stage A output / Stage B input: one record per CLIENT tick.
+# Formal JSON Schema: schema/tick_record.schema.json
+# -----------------------------------------------------------------------------
+tick_record:
+  fields:
+    tick:            "int. Client tick index, +1 per CLIENT_TICK_END. Gaps are allowed and invalidate windows that span them."
+    yaw:             "float32. Client yaw at end of tick (last rotation received in the tick, else carried forward). Unwrapped, as sent."
+    pitch:           "float32. Client pitch at end of tick."
+    rot_sent:        "bool. A rotation-bearing movement packet arrived in this tick."
+    forced_rotation: "bool. Server-forced rotation/teleport acknowledged, vehicle mount/dismount, or any non-mouse rotation source this tick."
+    attack_target:   "int|null. Entity id from an INTERACT(ATTACK) packet in this tick (first one if several)."
+    held_item:       "enum held_item_class. Main-hand item class at end of tick."
+    self_pos:        "[x,y,z] float64. Player feet position at end of tick (server-accepted)."
+    ping_ms:         "float. Latest round-trip estimate from the ping/transaction system."
+    entities:        "map id->entity_view. Nearby entities (<= capture_radius_blocks) AS THE CLIENT PERCEIVED THEM this tick (lag-compensated)."
+  entity_view:
+    rel:        "[dx,dy,dz] float64. Hitbox centre minus player EYE position, world axes, client-perceived."
+    half_width: "float64. Hitbox half-width (0.3 for a standing player)."
+    is_player:  "bool."
+  capture_radius_blocks: 8.0
+  held_item_class: [sword, axe, mace, trident, empty_hand, other]
+  minecraft_axes: >
+    Look vector for (yaw, pitch) in degrees:
+      v = (-sin(yaw)*cos(pitch), -sin(pitch), cos(yaw)*cos(pitch))
+    Bearing of a relative vector (dx,dy,dz):
+      b_yaw = deg(atan2(-dx, dz)); b_pitch = deg(-atan2(dy, hypot(dx, dz)))
+
+# -----------------------------------------------------------------------------
+# Session-level state: mouse-sensitivity step estimator.
+# The vanilla client rotates by  counts * step  where
+#   step = ((s*0.6 + 0.2)^3 * 8) * 0.15   degrees, s = sensitivity slider in [0,1]
+# so legitimate per-tick yaw deltas are (near-)integer multiples of `step`.
+# -----------------------------------------------------------------------------
+sensitivity_estimator:
+  accept_min_exclusive: 0.0
+  accept_max_inclusive: 5.0      # deg/tick; larger deltas carry too much float accumulation error
+  min_divisor: 0.0048            # half the smallest possible step (s=0 -> 0.0096)
+  buffer_size: 256               # most recent candidate gcds kept
+  min_mode_count: 15
+  valid_step_range: [0.0095904, 0.6150144]   # [step(0)=0.0096, step(1)=0.6144] widened by 0.1%
+  # Players who hand-edit options.txt beyond the slider range get a null estimate
+  # and are therefore unscorable (conservative; CT-01).
+  algorithm: >
+    Process records in order. For record t (with list predecessor p):
+      RESET (prev_accepted := none) and skip if: t is the first record, OR
+        p.tick != t.tick - 1 (gap), OR t.forced_rotation, OR yaw_t or yaw_p non-finite.
+      Otherwise skip WITHOUT reset if rot_sent=false.
+    a = |yaw_t - yaw_p| (binary64 of binary32 inputs).
+    If accept_min_exclusive < a <= accept_max_inclusive:
+      if prev_accepted exists: g = gcd_tol(a, prev_accepted); if g > min_divisor:
+         push key(g) into ring buffer (size buffer_size)
+      prev_accepted = a
+    Estimate = argmax over keys of count (tie: smallest key), as key/100000,
+    provided count >= min_mode_count and estimate within valid_step_range; else null.
+    gcd_tol(a, b): if a == 0 return 0; ensure a >= b (swap);
+      while b > min_divisor: r = a - floor(a / b) * b; a = b; b = r
+      return a
+  state_used_by_window: "estimate after processing the anchor tick (inclusive)"
+
+# -----------------------------------------------------------------------------
+# Window construction
+# -----------------------------------------------------------------------------
+window:
+  length_deltas: 20               # W: 20 rotation deltas = 1.0 s; needs W+1 records
+  anchor: "a tick with attack_target != null"
+  min_anchor_spacing_ticks: 10    # greedy, earliest first; ~ one sword cooldown (12.5 ticks)
+  min_path_deg: 1.0
+  target_distance_range: [0.5, 6.0]
+  max_yaw_ulp_to_step_ratio: 0.05
+  validity_checks_in_order:
+    - {code: target_not_player,      rule: "anchor target missing from anchor tick's entities, or is_player=false"}
+    - {code: insufficient_history,   rule: "fewer than W+1 records ending at anchor"}
+    - {code: tick_gap,               rule: "the W+1 records are not consecutive tick numbers"}
+    - {code: forced_rotation,        rule: "any of the W+1 records has forced_rotation=true"}
+    - {code: non_finite_rotation,    rule: "any yaw/pitch in the W+1 records is non-finite"}
+    - {code: target_not_tracked,     rule: "anchor target absent from entities on any of the W+1 records"}
+    - {code: target_distance,        rule: "|rel| at anchor outside target_distance_range"}
+    - {code: insufficient_path,      rule: "sum of per-tick speeds < min_path_deg"}
+  invalid_window_behaviour: >
+    The window is emitted with valid=false and invalid_reason=<first failing code>,
+    no features, and does NOT consume anchor spacing. Invalid windows are counted
+    and surfaced for review/monitoring but are never scored and never evidence.
+  quantisation_availability: >
+    Every valid window is scored by the model. quant_residual_yaw is an AUXILIARY
+    channel (model_input: false) and is null, with quant_unavailable_reason set, when
+    the sensitivity estimate is null (`no_sensitivity_estimate`) or
+    ulp32(max |yaw| over the window) > max_yaw_ulp_to_step_ratio * step (`yaw_precision`).
+    Design note: an earlier draft made such windows model-unscorable; the R02 fixture
+    showed that would leave a blatant un-quantised lock aimbot entirely unscored, so
+    quantisation was moved out of the model input. Persistent null estimates are
+    surfaced to reviewers as context, never counted as evidence (CT-01).
+
+# Notation inside a valid window (records r_0..r_W, r_W = anchor):
+#   d_i = (dy_i, dp_i) = (yaw_i - yaw_{i-1}, pitch_i - pitch_{i-1}), i = 1..W   (yaw NOT wrapped)
+#   s_i = sqrt(dy_i^2 + dp_i^2)        (mouse-space speed, deg/tick)
+#   e_i = normalised aim error at record i (see aim_error), i = 0..W
+#   x_i = wrap180(b_yaw_i - b_yaw_{i-1}) target-bearing yaw delta, i = 1..W
+aim_error:
+  formula: >
+    v = look(yaw_i, pitch_i); u = rel / |rel|;
+    err_deg = deg(atan2(|v x u|, v . u));
+    r_deg = deg(atan2(half_width, max(hypot(dx, dz), 0.1)));
+    e_i = err_deg / r_deg
+
+# -----------------------------------------------------------------------------
+# Model features (the flow is trained over these; continuous, real-valued)
+# origin: kept | redefined | new  — mapping to the original prototype's features
+# -----------------------------------------------------------------------------
+features:
+  - name: speed_mean
+    origin: {status: redefined, from: "velocity"}
+    formula: "mean_i s_i"
+    unit: deg/tick
+    model_input: true
+    model_transform: log1p
+  - name: speed_max
+    origin: {status: redefined, from: "flick angle"}
+    formula: "max_i s_i"
+    unit: deg/tick
+    model_input: true
+    model_transform: log1p
+  - name: accel_mean
+    origin: {status: redefined, from: "acceleration"}
+    formula: "mean over i=2..W of |d_i - d_{i-1}| (Euclidean)"
+    unit: deg/tick^2
+    model_input: true
+    model_transform: log1p
+  - name: jitter_ratio
+    origin: {status: redefined, from: "jitter"}
+    formula: >
+      over i=2..W-1: m_i = (d_{i-1} + d_i + d_{i+1}) / 3;
+      sum_i |d_i - m_i| / sum_i |d_i|   (0 if denominator < 1e-9)
+    unit: ratio
+    model_input: true
+    model_transform: log1p
+  - name: path_straightness
+    origin: {status: kept, from: "path ratio"}
+    formula: "|sum_i d_i| / sum_i s_i"
+    unit: ratio in [0,1]
+    model_input: true
+    model_transform: logit_eps
+  - name: pitch_share
+    origin: {status: new}
+    formula: "sum_i |dp_i| / (sum_i |dy_i| + sum_i |dp_i|)"
+    unit: ratio in [0,1]
+    model_input: true
+    model_transform: logit_eps
+  - name: aim_err_attack
+    origin: {status: new}
+    formula: "e_W"
+    unit: hitbox radii
+    model_input: true
+    model_transform: log1p
+  - name: aim_err_track_mean
+    origin: {status: new}
+    formula: "mean_{i=0..W} e_i"
+    unit: hitbox radii
+    model_input: true
+    model_transform: log1p
+  - name: aim_err_track_std
+    origin: {status: new}
+    formula: "population std_{i=0..W} e_i"
+    unit: hitbox radii
+    model_input: true
+    model_transform: log1p
+  - name: track_corr_lag0
+    origin: {status: redefined, from: "reaction time"}
+    formula: "pearson over pairs (x_i, dy_i), i=1..W; 0 if either population std < 1e-9"
+    unit: correlation
+    model_input: true
+    model_transform: identity
+  - name: track_corr_lag3
+    origin: {status: redefined, from: "reaction time"}
+    formula: "pearson over pairs (x_{i-3}, dy_i), i=4..W; 0 if either population std < 1e-9"
+    unit: correlation
+    model_input: true
+    model_transform: identity
+  - name: quant_residual_yaw
+    origin: {status: new}
+    formula: >
+      over i with dy_i != 0: q = |dy_i| / step; mean_i |q - floor(q + 0.5)|;
+      0 if no nonzero dy_i; null when quantisation is unavailable
+    unit: mouse counts, in [0, 0.5]
+    model_input: false   # auxiliary evidence channel, see window.quantisation_availability
+    model_transform: logit_eps_half
+
+model_transforms:
+  log1p: "log(1 + x)"
+  logit_eps: "logit(clip(x, 1e-4, 1 - 1e-4))"
+  logit_eps_half: "logit(clip(2x, 1e-4, 1 - 1e-4))"
+  identity: "x"
+  where_applied: >
+    Transforms + standardisation are baked INTO the exported ONNX graph (Phase 2),
+    so the Java side feeds raw Stage B features. They are listed here so the
+    export can be checked against this spec.
+
+# -----------------------------------------------------------------------------
+# Conditioning context (observable; replaces the original skill/weapon/distance/situation)
+# -----------------------------------------------------------------------------
+context:
+  - name: weapon_class
+    origin: {status: kept, from: "weapon"}
+    formula: "held_item of anchor record"
+    type: categorical
+  - name: target_distance
+    origin: {status: kept, from: "distance"}
+    formula: "|rel| at anchor"
+    unit: blocks
+  - name: target_ang_speed
+    origin: {status: redefined, from: "situation"}
+    formula: "mean_i sqrt(x_i^2 + (b_pitch_i - b_pitch_{i-1})^2)"
+    unit: deg/tick
+  - name: self_speed
+    origin: {status: redefined, from: "situation"}
+    formula: "mean_i hypot(self_pos_i.x - self_pos_{i-1}.x, self_pos_i.z - self_pos_{i-1}.z)"
+    unit: blocks/tick
+  - name: ping_ms
+    origin: {status: new}
+    formula: "median of ping_ms over the W+1 records (odd count: middle element)"
+    unit: ms
+dropped_context:
+  - name: skill
+    reason: >
+      Not observable at inference. Any skill estimate derived from the player's own
+      aim is circular (conditioning on the quantity under test lets a cheater raise
+      their own 'skill' and widen their own normal band). Revisit only with an
+      external, aim-independent signal (e.g. match-outcome rating) — open question.
+
+# -----------------------------------------------------------------------------
+# Hard rules (deterministic, protocol-level). Rule hits are EVIDENCE for the
+# Yellow-Flag accumulator only — never an automatic action (Part 0.4).
+# -----------------------------------------------------------------------------
+rules:
+  - id: HR_PITCH_RANGE
+    scope: tick
+    enabled: true
+    condition: "rot_sent and finite(pitch) and |pitch| > 90.0"
+    rationale: "Vanilla client clamps pitch to [-90, 90]; exceeding it requires a modified client."
+  - id: HR_NONFINITE
+    scope: tick
+    enabled: true
+    condition: "rot_sent and (yaw or pitch is non-finite)"
+    rationale: "Impossible from a vanilla client. (Paper also rejects these; recorded for evidence.)"
+  - id: HR_CENTER_LOCK
+    scope: window
+    enabled: false   # CANDIDATE — disabled until Phase 3 measures its FP rate (CT-02)
+    params: {max_norm_err: 0.02, min_target_ang_speed: 1.0, min_run_ticks: 8}
+    condition: >
+      longest run of consecutive records i (1..W) with e_i < max_norm_err AND
+      sqrt(x_i^2 + (b_pitch_i - b_pitch_{i-1})^2) > min_target_ang_speed
+      is >= min_run_ticks
+    rationale: >
+      Holding the crosshair within 2% of a hitbox radius of a target that is moving
+      >1 deg/tick for 0.4 s is not plausible for mouse aim. Lag-compensation error
+      makes a cheater's lock look WORSE, not better, so FP risk is mainly from
+      reconstruction bias — which is exactly what Phase 3 must measure.
+dropped_rules:
+  - id: original "rotation speed > 100 deg/ms"
+    reason: "Unmeasurable: rotation is sampled once per 50 ms tick; a legitimate flick can exceed 180 deg in one tick."
+  - id: original "reaction time < 50 ms"
+    reason: "Unmeasurable: one tick is 50 ms and arrival timing is dominated by network jitter; stimulus onset on the client screen is unknown."

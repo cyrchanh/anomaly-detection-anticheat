@@ -1,0 +1,62 @@
+Phase 1 is done and I've stopped here for your review. All 31 tests pass, nothing is committed, and the repo is its own `git init` inside the project folder.
+
+## What's built
+
+- **[schema/features.yaml](schema/features.yaml)** is the single source of truth. The extractor works in two stages. Stage A turns packets into per-tick records; it's Java-only and comes in Phase 4. Stage B turns those records into 1-second scoring windows, with formulas, constants, validity rules and float handling pinned down for both languages ([ADR 0002](docs/adr/0002-two-stage-feature-contract.md)).
+- **Feature redesign** ([ADR 0001](docs/adr/0001-feature-redesign.md)):
+
+  | Status | Original | New |
+  |---|---|---|
+  | Kept | path ratio | `path_straightness` |
+  | Redefined | velocity | `speed_mean` |
+  | Redefined | flick angle | `speed_max` |
+  | Redefined | acceleration | `accel_mean` |
+  | Redefined | jitter | `jitter_ratio` (tick-scale, since tremor is aliased at 20 Hz) |
+  | Dropped and replaced | reaction time | `track_corr_lag0` / `lag3` (correlation with target movement) |
+  | New | — | `pitch_share`, three aim-error features, and an auxiliary quantization residual |
+  | Dropped | skill (context) | circular; not observable at inference |
+  | Dropped | both original hard rules | unmeasurable at tick resolution |
+
+  The four unnamed original features can't be classified, because the doc never defines them.
+- **Python reference extractor** in [ml/src/fmac/](ml/src/fmac/), including a sensitivity estimator.
+- **Golden fixtures**: 7 *analytic* fixtures, whose expected values come from closed-form math rather than the extractor, plus 2 *regression* fixtures that exist only to check the Java port. CI is set up for Python now; the Java job is added in Phase 4.
+- **Provenance system**: [dataset/](dataset/) manifests by trust level. `mix()` refuses adversarial data for training "normal", synthetic data for false-positive claims, and any real data without consent sign-off.
+- **[Privacy/consent policy DRAFT](docs/privacy-consent-policy-DRAFT.md)**, written to the strictest overlap of COPPA, GDPR/GDPR-K and the UK AADC, with a sign-off checklist. The design for enforcing that gate in code is [ADR 0003](docs/adr/0003-collection-gate.md).
+- Also written: a [risk register](docs/risk-register.md), a [conservative-tradeoff log](docs/conservative-tradeoffs.md) (CT-01 to CT-06), the [literature survey](docs/literature-and-datasets.md) and a [calibration report](docs/calibration-report-phase1.md).
+
+## Findings that change the plan
+
+1. **The Minecraft mouse dataset (arXiv:2110.11080) can't be used.**
+   - It has no license file, so by default all rights are reserved.
+   - It also doesn't contain in-game camera motion. It records absolute desktop cursor positions: none near screen centre, where a captured in-game cursor would sit, and 7.7% clipped at screen edges. The 10-user files only have 1-second timestamps.
+   - There is no public 1.21.x rotation data at all. So nothing could be calibrated to real Minecraft distributions, and Phase 2's synthetic generator will rest on untuned priors until consented capture opens.
+2. **I used GAN-Aimbots instead (CC BY 4.0, real labelled human-vs-aimbot data, ViZDoom).** This only checks whether the feature *definitions* carry signal, not Minecraft values.
+   - Per-window separation is modest: about 0.6–0.85 AUC. So decisions have to accumulate evidence across many windows.
+   - GAN aimbots have *lower* jitter than humans, while simpler aimbots have higher. One-sided thresholds would miss one family; a density model doesn't.
+   - That dataset includes the recording machines' MAC addresses. Our code never reads them.
+3. **I fixed a gap in my own first design.** Making windows unscorable when there's no sensitivity estimate would have left the most blatant aimbot (an unquantized lock-on) completely unscored. The quantization residual is now a side channel, and the model scores every valid window.
+4. **Open-source Grim barely detects aim.** Its aim checks are just a duplicate-rotation check and a 360° snap check. "Beats Grim" would be a weak claim, so Phase 3 adds a simple statistical baseline as well.
+5. **The "YAACS" paper exists** (arXiv:2607.04336), but it has no released data and doesn't involve GAN-Aimbots. I'm not relying on it.
+6. **XGuardian's data is GPL-3.0 and 22 GB.** I haven't downloaded it.
+7. **1.21.2 is the version floor.** That's the first version with the tick-end packet the per-tick features depend on.
+8. **The repo is inside your OneDrive-synced Desktop.** Raw data must live outside it, under `$FMAC_DATA_ROOT`. The collection gate refuses data folders inside cloud-sync directories.
+
+## Decisions I need from you
+
+1. **Age floor.** The draft says **18+**, which is stricter than your under-16 exclusion. The UK AADC treats 16–17-year-olds as children and requires profiling to be off by default for them. Do you accept 18+, or want to revisit it with a lawyer?
+2. **Commit.** Should I commit Phase 1 as the first commit on `main`?
+3. **Downloaded data.** The GAN-Aimbots data and my analysis copies are in the session's temporary scratchpad. Where should a permanent `FMAC_DATA_ROOT` live? It needs to be outside OneDrive.
+4. **XGuardian.** Should I download it (22 GB) for the Phase 3 cross-check, or skip it?
+
+Sources:
+- [arXiv:2110.11080](https://arxiv.org/abs/2110.11080)
+- [Minecraft Mouse Dynamics repo](https://github.com/NyleSiddiqui/Minecraft-Mouse-Dynamics-Dataset)
+- [XGuardian arXiv:2601.18068](https://arxiv.org/abs/2601.18068)
+- [XGuardian Zenodo](https://zenodo.org/doi/10.5281/zenodo.17845614)
+- [YAACS arXiv:2607.04336](https://arxiv.org/abs/2607.04336)
+- [GAN-Aimbots arXiv:2205.07060](https://arxiv.org/abs/2205.07060)
+- [GAN-Aimbots data (Zenodo)](https://zenodo.org/record/6345323)
+- [GAN-Aimbots code](https://github.com/miffyli/gan-aimbots)
+- [AntiCheatPT arXiv:2508.06348](https://arxiv.org/abs/2508.06348)
+- [Aim Low, Shoot High](https://intellisec.de/research/aimbots)
+- [PacketEvents `CLIENT_TICK_END`](https://javadocs.packetevents.com/com/github/retrooper/packetevents/protocol/packettype/PacketType.Play.Client.html)

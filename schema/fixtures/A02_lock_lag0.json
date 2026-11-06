@@ -1,0 +1,1356 @@
+{
+ "fixture_id": "A02_lock_lag0",
+ "kind": "analytic",
+ "spec_version": "1.0.0",
+ "description": "Player yaw locked to an orbiting target's bearing with zero lag (aimbot-like): aim error ~0, track_corr_lag0 = 1, HR_CENTER_LOCK fires when enabled.",
+ "provenance": "synthetic-fixture (hand-constructed; not training data)",
+ "rule_overrides": {
+  "HR_CENTER_LOCK": true
+ },
+ "tolerance": {
+  "rel": 1e-09,
+  "abs": 1e-07
+ },
+ "session": {
+  "spec_version": "1.0.0",
+  "ticks": [
+   {
+    "tick": 0,
+    "yaw": 0.0,
+    "pitch": 0.0,
+    "rot_sent": false,
+    "forced_rotation": false,
+    "attack_target": null,
+    "held_item": "sword",
+    "self_pos": [
+     0.0,
+     64.0,
+     0.0
+    ],
+    "ping_ms": 50.0,
+    "entities": {
+     "7": {
+      "rel": [
+       -0.0,
+       0.0,
+       3.0
+      ],
+      "half_width": 0.3,
+      "is_player": true
+     }
+    }
+   },
+   {
+    "tick": 1,
+    "yaw": 0.125,
+    "pitch": 0.0,
+    "rot_sent": true,
+    "forced_rotation": false,
+    "attack_target": null,
+    "held_item": "sword",
+    "self_pos": [
+     0.0,
+     64.0,
+     0.0
+    ],
+    "ping_ms": 50.0,
+    "entities": {
+     "7": {
+      "rel": [
+       -0.006544979503010309,
+       0.0,
+       2.9999928605320556
+      ],
+      "half_width": 0.3,
+      "is_player": true
+     }
+    }
+   },
+   {
+    "tick": 2,
+    "yaw": 0.25,
+    "pitch": 0.0,
+    "rot_sent": true,
+    "forced_rotation": false,
+    "attack_target": null,
+    "held_item": "sword",
+    "self_pos": [
+     0.0,
+     64.0,
+     0.0
+    ],
+    "ping_ms": 50.0,
+    "entities": {
+     "7": {
+      "rel": [
+       -0.013089927854239713,
+       0.0,
+       2.9999714421622032
+      ],
+      "half_width": 0.3,
+      "is_player": true
+     }
+    }
+   },
+   {
+    "tick": 3,
+    "yaw": 0.375,
+    "pitch": 0.0,
+    "rot_sent": true,
+    "forced_rotation": false,
+    "attack_target": null,
+    "held_item": "sword",
+    "self_pos": [
+     0.0,
+     64.0,
+     0.0
+    ],
+    "ping_ms": 50.0,
+    "entities": {
+     "7": {
+      "rel": [
+       -0.019634813902055577,
+       0.0,
+       2.9999357449923876
+      ],
+      "half_width": 0.3,
+      "is_player": true
+     }
+    }
+   },
+   {
+    "tick": 4,
+    "yaw": 0.5,
+    "pitch": 0.0,
+    "rot_sent": true,
+    "forced_rotation": false,
+    "attack_target": null,
+    "held_item": "sword",
+    "self_pos": [
+     0.0,
+     64.0,
+     0.0
+    ],
+    "ping_ms": 50.0,
+    "entities": {
+     "7": {
+      "rel": [
+       -0.026179606495121806,
+       0.0,
+       2.999885769192514
+      ],
+      "half_width": 0.3,
+      "is_player": true
+     }
+    }
+   },
+   {
+    "tick": 5,
+    "yaw": 0.625,
+    "pitch": 0.0,
+    "rot_sent": true,
+    "forced_rotation": false,
+    "attack_target": null,
+    "held_item": "sword",
+    "self_pos": [
+     0.0,
+     64.0,
+     0.0
+    ],
+    "ping_ms": 50.0,
+    "entities": {
+     "7": {
+      "rel": [
+       -0.032724274482547125,
+       0.0,
+       2.9998215150004492
+      ],
+      "half_width": 0.3,
+      "is_player": true
+     }
+    }
+   },
+   {
+    "tick": 6,
+    "yaw": 0.75,
+    "pitch": 0.0,
+    "rot_sent": true,
+    "forced_rotation": false,
+    "attack_target": null,
+    "held_item": "sword",
+    "self_pos": [
+     0.0,
+     64.0,
+     0.0
+    ],
+    "ping_ms": 50.0,
+    "entities": {
+     "7": {
+      "rel": [
+       -0.039268786714033325,
+       0.0,
+       2.999742982722021
+      ],
+      "half_width": 0.3,
+      "is_player": true
+     }
+    }
+   },
+   {
+    "tick": 7,
+    "yaw": 0.875,
+    "pitch": 0.0,
+    "rot_sent": true,
+    "forced_rotation": false,
+    "attack_target": null,
+    "held_item": "sword",
+    "self_pos": [
+     0.0,
+     64.0,
+     0.0
+    ],
+    "ping_ms": 50.0,
+    "entities": {
+     "7": {
+      "rel": [
+       -0.04581311204002354,
+       0.0,
+       2.9996501727310148
+      ],
+      "half_width": 0.3,
+      "is_player": true
+     }
+    }
+   },
+   {
+    "tick": 8,
+    "yaw": 1.0,
+    "pitch": 0.0,
+    "rot_sent": true,
+    "forced_rotation": false,
+    "attack_target": null,
+    "held_item": "sword",
+    "self_pos": [
+     0.0,
+     64.0,
+     0.0
+    ],
+    "ping_ms": 50.0,
+    "entities": {
+     "7": {
+      "rel": [
+       -0.052357219311850535,
+       0.0,
+       2.999543085469174
+      ],
+      "half_width": 0.3,
+      "is_player": true
+     }
+    }
+   },
+   {
+    "tick": 9,
+    "yaw": 1.125,
+    "pitch": 0.0,
+    "rot_sent": true,
+    "forced_rotation": false,
+    "attack_target": null,
+    "held_item": "sword",
+    "self_pos": [
+     0.0,
+     64.0,
+     0.0
+    ],
+    "ping_ms": 50.0,
+    "entities": {
+     "7": {
+      "rel": [
+       -0.0589010773818849,
+       0.0,
+       2.9994217214461942
+      ],
+      "half_width": 0.3,
+      "is_player": true
+     }
+    }
+   },
+   {
+    "tick": 10,
+    "yaw": 1.25,
+    "pitch": 0.0,
+    "rot_sent": true,
+    "forced_rotation": false,
+    "attack_target": null,
+    "held_item": "sword",
+    "self_pos": [
+     0.0,
+     64.0,
+     0.0
+    ],
+    "ping_ms": 50.0,
+    "entities": {
+     "7": {
+      "rel": [
+       -0.06544465510368336,
+       0.0,
+       2.9992860812397275
+      ],
+      "half_width": 0.3,
+      "is_player": true
+     }
+    }
+   },
+   {
+    "tick": 11,
+    "yaw": 1.375,
+    "pitch": 0.0,
+    "rot_sent": true,
+    "forced_rotation": false,
+    "attack_target": null,
+    "held_item": "sword",
+    "self_pos": [
+     0.0,
+     64.0,
+     0.0
+    ],
+    "ping_ms": 50.0,
+    "entities": {
+     "7": {
+      "rel": [
+       -0.07198792133213698,
+       0.0,
+       2.999136165495371
+      ],
+      "half_width": 0.3,
+      "is_player": true
+     }
+    }
+   },
+   {
+    "tick": 12,
+    "yaw": 1.5,
+    "pitch": 0.0,
+    "rot_sent": true,
+    "forced_rotation": false,
+    "attack_target": null,
+    "held_item": "sword",
+    "self_pos": [
+     0.0,
+     64.0,
+     0.0
+    ],
+    "ping_ms": 50.0,
+    "entities": {
+     "7": {
+      "rel": [
+       -0.07853084492361946,
+       0.0,
+       2.998971974926672
+      ],
+      "half_width": 0.3,
+      "is_player": true
+     }
+    }
+   },
+   {
+    "tick": 13,
+    "yaw": 1.625,
+    "pitch": 0.0,
+    "rot_sent": true,
+    "forced_rotation": false,
+    "attack_target": null,
+    "held_item": "sword",
+    "self_pos": [
+     0.0,
+     64.0,
+     0.0
+    ],
+    "ping_ms": 50.0,
+    "entities": {
+     "7": {
+      "rel": [
+       -0.08507339473613526,
+       0.0,
+       2.998793510315118
+      ],
+      "half_width": 0.3,
+      "is_player": true
+     }
+    }
+   },
+   {
+    "tick": 14,
+    "yaw": 1.75,
+    "pitch": 0.0,
+    "rot_sent": true,
+    "forced_rotation": false,
+    "attack_target": null,
+    "held_item": "sword",
+    "self_pos": [
+     0.0,
+     64.0,
+     0.0
+    ],
+    "ping_ms": 50.0,
+    "entities": {
+     "7": {
+      "rel": [
+       -0.09161553962946797,
+       0.0,
+       2.9986007725101387
+      ],
+      "half_width": 0.3,
+      "is_player": true
+     }
+    }
+   },
+   {
+    "tick": 15,
+    "yaw": 1.875,
+    "pitch": 0.0,
+    "rot_sent": true,
+    "forced_rotation": false,
+    "attack_target": null,
+    "held_item": "sword",
+    "self_pos": [
+     0.0,
+     64.0,
+     0.0
+    ],
+    "ping_ms": 50.0,
+    "entities": {
+     "7": {
+      "rel": [
+       -0.09815724846532842,
+       0.0,
+       2.998393762429097
+      ],
+      "half_width": 0.3,
+      "is_player": true
+     }
+    }
+   },
+   {
+    "tick": 16,
+    "yaw": 2.0,
+    "pitch": 0.0,
+    "rot_sent": true,
+    "forced_rotation": false,
+    "attack_target": null,
+    "held_item": "sword",
+    "self_pos": [
+     0.0,
+     64.0,
+     0.0
+    ],
+    "ping_ms": 50.0,
+    "entities": {
+     "7": {
+      "rel": [
+       -0.1046984901075029,
+       0.0,
+       2.998172481057287
+      ],
+      "half_width": 0.3,
+      "is_player": true
+     }
+    }
+   },
+   {
+    "tick": 17,
+    "yaw": 2.125,
+    "pitch": 0.0,
+    "rot_sent": true,
+    "forced_rotation": false,
+    "attack_target": null,
+    "held_item": "sword",
+    "self_pos": [
+     0.0,
+     64.0,
+     0.0
+    ],
+    "ping_ms": 50.0,
+    "entities": {
+     "7": {
+      "rel": [
+       -0.11123923342200145,
+       0.0,
+       2.9979369294479303
+      ],
+      "half_width": 0.3,
+      "is_player": true
+     }
+    }
+   },
+   {
+    "tick": 18,
+    "yaw": 2.25,
+    "pitch": 0.0,
+    "rot_sent": true,
+    "forced_rotation": false,
+    "attack_target": null,
+    "held_item": "sword",
+    "self_pos": [
+     0.0,
+     64.0,
+     0.0
+    ],
+    "ping_ms": 50.0,
+    "entities": {
+     "7": {
+      "rel": [
+       -0.11777944727720582,
+       0.0,
+       2.9976871087221686
+      ],
+      "half_width": 0.3,
+      "is_player": true
+     }
+    }
+   },
+   {
+    "tick": 19,
+    "yaw": 2.375,
+    "pitch": 0.0,
+    "rot_sent": true,
+    "forced_rotation": false,
+    "attack_target": null,
+    "held_item": "sword",
+    "self_pos": [
+     0.0,
+     64.0,
+     0.0
+    ],
+    "ping_ms": 50.0,
+    "entities": {
+     "7": {
+      "rel": [
+       -0.12431910054401799,
+       0.0,
+       2.99742302006906
+      ],
+      "half_width": 0.3,
+      "is_player": true
+     }
+    }
+   },
+   {
+    "tick": 20,
+    "yaw": 2.5,
+    "pitch": 0.0,
+    "rot_sent": true,
+    "forced_rotation": false,
+    "attack_target": null,
+    "held_item": "sword",
+    "self_pos": [
+     0.0,
+     64.0,
+     0.0
+    ],
+    "ping_ms": 50.0,
+    "entities": {
+     "7": {
+      "rel": [
+       -0.130858162096008,
+       0.0,
+       2.9971446647455733
+      ],
+      "half_width": 0.3,
+      "is_player": true
+     }
+    }
+   },
+   {
+    "tick": 21,
+    "yaw": 2.625,
+    "pitch": 0.0,
+    "rot_sent": true,
+    "forced_rotation": false,
+    "attack_target": null,
+    "held_item": "sword",
+    "self_pos": [
+     0.0,
+     64.0,
+     0.0
+    ],
+    "ping_ms": 50.0,
+    "entities": {
+     "7": {
+      "rel": [
+       -0.1373966008095623,
+       0.0,
+       2.9968520440765802
+      ],
+      "half_width": 0.3,
+      "is_player": true
+     }
+    }
+   },
+   {
+    "tick": 22,
+    "yaw": 2.75,
+    "pitch": 0.0,
+    "rot_sent": true,
+    "forced_rotation": false,
+    "attack_target": null,
+    "held_item": "sword",
+    "self_pos": [
+     0.0,
+     64.0,
+     0.0
+    ],
+    "ping_ms": 50.0,
+    "entities": {
+     "7": {
+      "rel": [
+       -0.14393438556403182,
+       0.0,
+       2.9965451594548522
+      ],
+      "half_width": 0.3,
+      "is_player": true
+     }
+    }
+   },
+   {
+    "tick": 23,
+    "yaw": 2.875,
+    "pitch": 0.0,
+    "rot_sent": true,
+    "forced_rotation": false,
+    "attack_target": null,
+    "held_item": "sword",
+    "self_pos": [
+     0.0,
+     64.0,
+     0.0
+    ],
+    "ping_ms": 50.0,
+    "entities": {
+     "7": {
+      "rel": [
+       -0.15047148524188014,
+       0.0,
+       2.99622401234105
+      ],
+      "half_width": 0.3,
+      "is_player": true
+     }
+    }
+   },
+   {
+    "tick": 24,
+    "yaw": 3.0,
+    "pitch": 0.0,
+    "rot_sent": true,
+    "forced_rotation": false,
+    "attack_target": null,
+    "held_item": "sword",
+    "self_pos": [
+     0.0,
+     64.0,
+     0.0
+    ],
+    "ping_ms": 50.0,
+    "entities": {
+     "7": {
+      "rel": [
+       -0.1570078687288315,
+       0.0,
+       2.9958886042637216
+      ],
+      "half_width": 0.3,
+      "is_player": true
+     }
+    }
+   },
+   {
+    "tick": 25,
+    "yaw": 3.125,
+    "pitch": 0.0,
+    "rot_sent": true,
+    "forced_rotation": false,
+    "attack_target": null,
+    "held_item": "sword",
+    "self_pos": [
+     0.0,
+     64.0,
+     0.0
+    ],
+    "ping_ms": 50.0,
+    "entities": {
+     "7": {
+      "rel": [
+       -0.16354350491401898,
+       0.0,
+       2.9955389368192895
+      ],
+      "half_width": 0.3,
+      "is_player": true
+     }
+    }
+   },
+   {
+    "tick": 26,
+    "yaw": 3.25,
+    "pitch": 0.0,
+    "rot_sent": true,
+    "forced_rotation": false,
+    "attack_target": null,
+    "held_item": "sword",
+    "self_pos": [
+     0.0,
+     64.0,
+     0.0
+    ],
+    "ping_ms": 50.0,
+    "entities": {
+     "7": {
+      "rel": [
+       -0.17007836269013255,
+       0.0,
+       2.995175011672046
+      ],
+      "half_width": 0.3,
+      "is_player": true
+     }
+    }
+   },
+   {
+    "tick": 27,
+    "yaw": 3.375,
+    "pitch": 0.0,
+    "rot_sent": true,
+    "forced_rotation": false,
+    "attack_target": null,
+    "held_item": "sword",
+    "self_pos": [
+     0.0,
+     64.0,
+     0.0
+    ],
+    "ping_ms": 50.0,
+    "entities": {
+     "7": {
+      "rel": [
+       -0.1766124109535671,
+       0.0,
+       2.9947968305541477
+      ],
+      "half_width": 0.3,
+      "is_player": true
+     }
+    }
+   },
+   {
+    "tick": 28,
+    "yaw": 3.5,
+    "pitch": 0.0,
+    "rot_sent": true,
+    "forced_rotation": false,
+    "attack_target": null,
+    "held_item": "sword",
+    "self_pos": [
+     0.0,
+     64.0,
+     0.0
+    ],
+    "ping_ms": 50.0,
+    "entities": {
+     "7": {
+      "rel": [
+       -0.18314561860457063,
+       0.0,
+       2.994404395265601
+      ],
+      "half_width": 0.3,
+      "is_player": true
+     }
+    }
+   },
+   {
+    "tick": 29,
+    "yaw": 3.625,
+    "pitch": 0.0,
+    "rot_sent": true,
+    "forced_rotation": false,
+    "attack_target": null,
+    "held_item": "sword",
+    "self_pos": [
+     0.0,
+     64.0,
+     0.0
+    ],
+    "ping_ms": 50.0,
+    "entities": {
+     "7": {
+      "rel": [
+       -0.189677954547392,
+       0.0,
+       2.993997707674259
+      ],
+      "half_width": 0.3,
+      "is_player": true
+     }
+    }
+   },
+   {
+    "tick": 30,
+    "yaw": 5.125,
+    "pitch": 0.0,
+    "rot_sent": true,
+    "forced_rotation": false,
+    "attack_target": null,
+    "held_item": "sword",
+    "self_pos": [
+     0.0,
+     64.0,
+     0.0
+    ],
+    "ping_ms": 50.0,
+    "entities": {
+     "7": {
+      "rel": [
+       -0.267986679877361,
+       0.0,
+       2.98800654942527
+      ],
+      "half_width": 0.3,
+      "is_player": true
+     }
+    }
+   },
+   {
+    "tick": 31,
+    "yaw": 6.375,
+    "pitch": 0.0,
+    "rot_sent": true,
+    "forced_rotation": false,
+    "attack_target": null,
+    "held_item": "sword",
+    "self_pos": [
+     0.0,
+     64.0,
+     0.0
+    ],
+    "ping_ms": 50.0,
+    "entities": {
+     "7": {
+      "rel": [
+       -0.3331059256628331,
+       0.0,
+       2.9814493861691345
+      ],
+      "half_width": 0.3,
+      "is_player": true
+     }
+    }
+   },
+   {
+    "tick": 32,
+    "yaw": 8.375,
+    "pitch": 0.0,
+    "rot_sent": true,
+    "forced_rotation": false,
+    "attack_target": null,
+    "held_item": "sword",
+    "self_pos": [
+     0.0,
+     64.0,
+     0.0
+    ],
+    "ping_ms": 50.0,
+    "entities": {
+     "7": {
+      "rel": [
+       -0.43695408955442344,
+       0.0,
+       2.9680079386048925
+      ],
+      "half_width": 0.3,
+      "is_player": true
+     }
+    }
+   },
+   {
+    "tick": 33,
+    "yaw": 9.5,
+    "pitch": 0.0,
+    "rot_sent": true,
+    "forced_rotation": false,
+    "attack_target": null,
+    "held_item": "sword",
+    "self_pos": [
+     0.0,
+     64.0,
+     0.0
+    ],
+    "ping_ms": 50.0,
+    "entities": {
+     "7": {
+      "rel": [
+       -0.49514281758203293,
+       0.0,
+       2.9588568046116945
+      ],
+      "half_width": 0.3,
+      "is_player": true
+     }
+    }
+   },
+   {
+    "tick": 34,
+    "yaw": 11.25,
+    "pitch": 0.0,
+    "rot_sent": true,
+    "forced_rotation": false,
+    "attack_target": null,
+    "held_item": "sword",
+    "self_pos": [
+     0.0,
+     64.0,
+     0.0
+    ],
+    "ping_ms": 50.0,
+    "entities": {
+     "7": {
+      "rel": [
+       -0.5852709660483848,
+       0.0,
+       2.9423558412096913
+      ],
+      "half_width": 0.3,
+      "is_player": true
+     }
+    }
+   },
+   {
+    "tick": 35,
+    "yaw": 12.75,
+    "pitch": 0.0,
+    "rot_sent": true,
+    "forced_rotation": false,
+    "attack_target": null,
+    "held_item": "sword",
+    "self_pos": [
+     0.0,
+     64.0,
+     0.0
+    ],
+    "ping_ms": 50.0,
+    "entities": {
+     "7": {
+      "rel": [
+       -0.6620923050645033,
+       0.0,
+       2.926026961525538
+      ],
+      "half_width": 0.3,
+      "is_player": true
+     }
+    }
+   },
+   {
+    "tick": 36,
+    "yaw": 15.0,
+    "pitch": 0.0,
+    "rot_sent": true,
+    "forced_rotation": false,
+    "attack_target": null,
+    "held_item": "sword",
+    "self_pos": [
+     0.0,
+     64.0,
+     0.0
+    ],
+    "ping_ms": 50.0,
+    "entities": {
+     "7": {
+      "rel": [
+       -0.7764571353075622,
+       0.0,
+       2.897777478867205
+      ],
+      "half_width": 0.3,
+      "is_player": true
+     }
+    }
+   },
+   {
+    "tick": 37,
+    "yaw": 16.375,
+    "pitch": 0.0,
+    "rot_sent": true,
+    "forced_rotation": false,
+    "attack_target": null,
+    "held_item": "sword",
+    "self_pos": [
+     0.0,
+     64.0,
+     0.0
+    ],
+    "ping_ms": 50.0,
+    "entities": {
+     "7": {
+      "rel": [
+       -0.8457685508815244,
+       0.0,
+       2.878311233751445
+      ],
+      "half_width": 0.3,
+      "is_player": true
+     }
+    }
+   },
+   {
+    "tick": 38,
+    "yaw": 17.5,
+    "pitch": 0.0,
+    "rot_sent": true,
+    "forced_rotation": false,
+    "attack_target": null,
+    "held_item": "sword",
+    "self_pos": [
+     0.0,
+     64.0,
+     0.0
+    ],
+    "ping_ms": 50.0,
+    "entities": {
+     "7": {
+      "rel": [
+       -0.9021173985128194,
+       0.0,
+       2.861150852244681
+      ],
+      "half_width": 0.3,
+      "is_player": true
+     }
+    }
+   },
+   {
+    "tick": 39,
+    "yaw": 19.125,
+    "pitch": 0.0,
+    "rot_sent": true,
+    "forced_rotation": false,
+    "attack_target": null,
+    "held_item": "sword",
+    "self_pos": [
+     0.0,
+     64.0,
+     0.0
+    ],
+    "ping_ms": 50.0,
+    "entities": {
+     "7": {
+      "rel": [
+       -0.9828905386850805,
+       0.0,
+       2.834418139400634
+      ],
+      "half_width": 0.3,
+      "is_player": true
+     }
+    }
+   },
+   {
+    "tick": 40,
+    "yaw": 21.125,
+    "pitch": 0.0,
+    "rot_sent": true,
+    "forced_rotation": false,
+    "attack_target": null,
+    "held_item": "sword",
+    "self_pos": [
+     0.0,
+     64.0,
+     0.0
+    ],
+    "ping_ms": 50.0,
+    "entities": {
+     "7": {
+      "rel": [
+       -1.0812115548352486,
+       0.0,
+       2.7983891033397668
+      ],
+      "half_width": 0.3,
+      "is_player": true
+     }
+    }
+   },
+   {
+    "tick": 41,
+    "yaw": 22.375,
+    "pitch": 0.0,
+    "rot_sent": true,
+    "forced_rotation": false,
+    "attack_target": null,
+    "held_item": "sword",
+    "self_pos": [
+     0.0,
+     64.0,
+     0.0
+    ],
+    "ping_ms": 50.0,
+    "entities": {
+     "7": {
+      "rel": [
+       -1.142000792335634,
+       0.0,
+       2.774136656746524
+      ],
+      "half_width": 0.3,
+      "is_player": true
+     }
+    }
+   },
+   {
+    "tick": 42,
+    "yaw": 24.25,
+    "pitch": 0.0,
+    "rot_sent": true,
+    "forced_rotation": false,
+    "attack_target": null,
+    "held_item": "sword",
+    "self_pos": [
+     0.0,
+     64.0,
+     0.0
+    ],
+    "ping_ms": 50.0,
+    "entities": {
+     "7": {
+      "rel": [
+       -1.2321565578404317,
+       0.0,
+       2.7352861307312657
+      ],
+      "half_width": 0.3,
+      "is_player": true
+     }
+    }
+   },
+   {
+    "tick": 43,
+    "yaw": 25.75,
+    "pitch": 0.0,
+    "rot_sent": true,
+    "forced_rotation": false,
+    "attack_target": null,
+    "held_item": "sword",
+    "self_pos": [
+     0.0,
+     64.0,
+     0.0
+    ],
+    "ping_ms": 50.0,
+    "entities": {
+     "7": {
+      "rel": [
+       -1.3033357722132513,
+       0.0,
+       2.7020947179677637
+      ],
+      "half_width": 0.3,
+      "is_player": true
+     }
+    }
+   },
+   {
+    "tick": 44,
+    "yaw": 26.875,
+    "pitch": 0.0,
+    "rot_sent": true,
+    "forced_rotation": false,
+    "attack_target": null,
+    "held_item": "sword",
+    "self_pos": [
+     0.0,
+     64.0,
+     0.0
+    ],
+    "ping_ms": 50.0,
+    "entities": {
+     "7": {
+      "rel": [
+       -1.3561366385301592,
+       0.0,
+       2.6759845697679427
+      ],
+      "half_width": 0.3,
+      "is_player": true
+     }
+    }
+   },
+   {
+    "tick": 45,
+    "yaw": 29.0,
+    "pitch": 0.0,
+    "rot_sent": true,
+    "forced_rotation": false,
+    "attack_target": null,
+    "held_item": "sword",
+    "self_pos": [
+     0.0,
+     64.0,
+     0.0
+    ],
+    "ping_ms": 50.0,
+    "entities": {
+     "7": {
+      "rel": [
+       -1.4544288607390112,
+       0.0,
+       2.623859121418187
+      ],
+      "half_width": 0.3,
+      "is_player": true
+     }
+    }
+   },
+   {
+    "tick": 46,
+    "yaw": 30.75,
+    "pitch": 0.0,
+    "rot_sent": true,
+    "forced_rotation": false,
+    "attack_target": null,
+    "held_item": "sword",
+    "self_pos": [
+     0.0,
+     64.0,
+     0.0
+    ],
+    "ping_ms": 50.0,
+    "entities": {
+     "7": {
+      "rel": [
+       -1.5338792582311562,
+       0.0,
+       2.578219234504358
+      ],
+      "half_width": 0.3,
+      "is_player": true
+     }
+    }
+   },
+   {
+    "tick": 47,
+    "yaw": 32.0,
+    "pitch": 0.0,
+    "rot_sent": true,
+    "forced_rotation": false,
+    "attack_target": null,
+    "held_item": "sword",
+    "self_pos": [
+     0.0,
+     64.0,
+     0.0
+    ],
+    "ping_ms": 50.0,
+    "entities": {
+     "7": {
+      "rel": [
+       -1.5897577926996147,
+       0.0,
+       2.544144288469278
+      ],
+      "half_width": 0.3,
+      "is_player": true
+     }
+    }
+   },
+   {
+    "tick": 48,
+    "yaw": 33.5,
+    "pitch": 0.0,
+    "rot_sent": true,
+    "forced_rotation": false,
+    "attack_target": null,
+    "held_item": "sword",
+    "self_pos": [
+     0.0,
+     64.0,
+     0.0
+    ],
+    "ping_ms": 50.0,
+    "entities": {
+     "7": {
+      "rel": [
+       -1.6558109559361744,
+       0.0,
+       2.5016574662015048
+      ],
+      "half_width": 0.3,
+      "is_player": true
+     }
+    }
+   },
+   {
+    "tick": 49,
+    "yaw": 35.5,
+    "pitch": 0.0,
+    "rot_sent": true,
+    "forced_rotation": false,
+    "attack_target": 7,
+    "held_item": "sword",
+    "self_pos": [
+     0.0,
+     64.0,
+     0.0
+    ],
+    "ping_ms": 50.0,
+    "entities": {
+     "7": {
+      "rel": [
+       -1.7421088671328193,
+       0.0,
+       2.4423465550689576
+      ],
+      "half_width": 0.3,
+      "is_player": true
+     }
+    }
+   }
+  ]
+ },
+ "expected": {
+  "windows": [
+   {
+    "anchor_tick": 49,
+    "target_id": 7,
+    "valid": true,
+    "quant_unavailable_reason": null,
+    "features": {
+     "speed_mean": 1.59375,
+     "speed_max": 2.25,
+     "accel_mean": 0.5394736842105263,
+     "jitter_ratio": 0.1938325991189427,
+     "path_straightness": 1.0,
+     "pitch_share": 0.0,
+     "aim_err_attack": 0.0,
+     "aim_err_track_mean": 0.0,
+     "aim_err_track_std": 0.0,
+     "track_corr_lag0": 1.0,
+     "track_corr_lag3": 0.0879828326180257,
+     "quant_residual_yaw": 0.0
+    },
+    "context": {
+     "weapon_class": "sword",
+     "target_distance": 3.0,
+     "target_ang_speed": 1.59375,
+     "self_speed": 0.0,
+     "ping_ms": 50.0
+    },
+    "rule_hits": [
+     "HR_CENTER_LOCK"
+    ]
+   }
+  ],
+  "tick_rule_hits": [],
+  "anchors_skipped_spacing": 0,
+  "sensitivity_step_final": 0.125
+ }
+}

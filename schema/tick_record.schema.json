@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "fmac/tick_record.schema.json",
+  "title": "FMAC session (Stage A output / Stage B input)",
+  "description": "Normative prose lives in schema/features.yaml#tick_record. Non-finite floats are encoded as the strings NaN / Infinity / -Infinity.",
+  "type": "object",
+  "required": ["spec_version", "ticks"],
+  "additionalProperties": false,
+  "properties": {
+    "spec_version": {"type": "string"},
+    "ticks": {"type": "array", "items": {"$ref": "#/$defs/tick"}}
+  },
+  "$defs": {
+    "float_or_nonfinite": {
+      "oneOf": [
+        {"type": "number"},
+        {"enum": ["NaN", "Infinity", "-Infinity"]}
+      ]
+    },
+    "vec3": {"type": "array", "items": {"type": "number"}, "minItems": 3, "maxItems": 3},
+    "entity_view": {
+      "type": "object",
+      "required": ["rel", "half_width", "is_player"],
+      "additionalProperties": false,
+      "properties": {
+        "rel": {"$ref": "#/$defs/vec3"},
+        "half_width": {"type": "number", "exclusiveMinimum": 0},
+        "is_player": {"type": "boolean"}
+      }
+    },
+    "tick": {
+      "type": "object",
+      "required": ["tick", "yaw", "pitch", "rot_sent", "forced_rotation", "attack_target", "held_item", "self_pos", "ping_ms", "entities"],
+      "additionalProperties": false,
+      "properties": {
+        "tick": {"type": "integer"},
+        "yaw": {"$ref": "#/$defs/float_or_nonfinite"},
+        "pitch": {"$ref": "#/$defs/float_or_nonfinite"},
+        "rot_sent": {"type": "boolean"},
+        "forced_rotation": {"type": "boolean"},
+        "attack_target": {"type": ["integer", "null"]},
+        "held_item": {"enum": ["sword", "axe", "mace", "trident", "empty_hand", "other"]},
+        "self_pos": {"$ref": "#/$defs/vec3"},
+        "ping_ms": {"type": "number", "minimum": 0},
+        "entities": {
+          "type": "object",
+          "patternProperties": {"^-?[0-9]+$": {"$ref": "#/$defs/entity_view"}},
+          "additionalProperties": false
+        }
+      }
+    }
+  }
+}
